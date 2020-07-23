@@ -30,20 +30,24 @@ export const NinjaLogin = props => {
     // /user API needs to be modified
     API.post(`/user`, userRegistrationRequest)
       .then(res => {
-        //intended state: by logging in some information (name, email, profile picture) will already be set on the profile. should be taken to "edit" page, instead of "registration" page
+        // intended state: by logging in some information (name, email, profile picture) will already be set on the
+        // profile. should be taken to "edit" page, instead of "registration" page
+        //
+        // TODO: add in prepopulated data from Google
         props.setLoggedIn(true);
         props.history.push("/registration-form");
       })
       //TODO: fill in error handling
       .catch(error => {
         if (error.response) {
+          //TODO: add alert to user that initial registration failed; add information manually
         }
         //undefined error response == network error
         else {
-          //temporary way to test log in works, but this is when the network or server is down
-          props.setLoggedIn(true);
-          props.history.push("/registration-form");
+          //TODO: add alert to user to see admin due to network error or server is down
         }
+        props.setLoggedIn(true);
+        props.history.push("/registration-form");
       });
   };
 
