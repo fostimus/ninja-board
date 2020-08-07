@@ -15,37 +15,47 @@ export default LoginSection;
 
 export const NinjaLogin = props => {
   const register = googleResponse => {
-    const headers = {
-      headers: { Authorization: `Bearer ${googleResponse.tokenObj}` }
-    };
-
-    // NOTE: username is not sent in google response
-    const userRegistrationRequest = {
-      firstName: googleResponse.profileObj.givenName,
-      lastName: googleResponse.profileObj.familyName,
-      email: googleResponse.profileObj.email,
-      imageUrl: googleResponse.profileObj.imageUrl
-    };
-
-    console.log(props);
-
-    API.post(`/user`, userRegistrationRequest, headers)
-      .then(res => {
-        //intended state: by logging in some information (name, email, profile picture) will already be set on the profile. should be taken to "edit" page, instead of "registration" page
+    API.get("/user/" + googleResponse.profileObj.email).then(res => {
+      // if user already exists, send them to the scorecards page
+      if (res.exists === true) {
         props.setLoggedIn(true);
-        props.history.push("/registration-form");
-      })
-      //TODO: fill in error handling
-      .catch(error => {
-        if (error.response) {
-        }
-        //undefined error response == network error
-        else {
-          //temporary way to test log in works, but this is when the network or server is down
-          props.setLoggedIn(true);
-          props.history.push("/registration-form");
-        }
-      });
+        props.history.push("/scorecards");
+      }
+      // if they don't exist, send an API request to start the registration process
+      else {
+        const headers = {
+          headers: { Authorization: `Bearer ${googleResponse.tokenObj}` }
+        };
+
+        // NOTE: username is not sent in google response
+        const userRegistrationRequest = {
+          firstName: googleResponse.profileObj.givenName,
+          lastName: googleResponse.profileObj.familyName,
+          email: googleResponse.profileObj.email,
+          imageUrl: googleResponse.profileObj.imageUrl
+        };
+
+        console.log(props);
+
+        API.post("/user", userRegistrationRequest, headers)
+          .then(res => {
+            //intended state: by logging in some information (name, email, profile picture) will already be set on the profile. should be taken to "edit" page, instead of "registration" page
+            props.setLoggedIn(true);
+            props.history.push("/registration-form");
+          })
+          //TODO: fill in error handling
+          .catch(error => {
+            if (error.response) {
+            }
+            //undefined error response == network error
+            else {
+              //temporary way to test log in works, but this is when the network or server is down
+              props.setLoggedIn(true);
+              props.history.push("/registration-form");
+            }
+          });
+      }
+    });
   };
 
   const responseGoogle = response => {
