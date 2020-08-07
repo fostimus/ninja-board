@@ -37,25 +37,24 @@ export const NinjaLogin = props => {
 
         console.log(props);
 
-        API.post("/user", userRegistrationRequest, headers)
-          .then(res => {
-            //intended state: by logging in some information (name, email, profile picture) will already be set on the profile. should be taken to "edit" page, instead of "registration" page
-            props.setLoggedIn(true);
-            props.history.push("/registration-form");
-          })
-          //TODO: fill in error handling
-          .catch(error => {
-            if (error.response) {
-            }
-            //undefined error response == network error
-            else {
-              //temporary way to test log in works, but this is when the network or server is down
-              props.setLoggedIn(true);
-              props.history.push("/registration-form");
-            }
-          });
-      }
-    });
+    API.post(`/user`, userRegistrationRequest, headers)
+      .then(res => {
+        //intended state: by logging in some information (name, email, profile picture) will already be set on the profile. should be taken to "edit" page, instead of "registration" page
+        props.setLoggedIn(true);
+        props.history.push("/registration-form");
+      })
+      //TODO: fill in error handling
+      .catch(error => {
+        if (error.response) {
+        }
+        //undefined error response == network error
+        else {
+
+        }
+        //temporary way to test log in works, but this is when the network or server is down
+        props.setLoggedIn(true);
+        props.history.push("/registration-form");
+      });
   };
 
   const responseGoogle = response => {
